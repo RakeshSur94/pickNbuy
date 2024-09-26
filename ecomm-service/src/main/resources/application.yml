@@ -1,0 +1,17 @@
+server:
+  port: ${SERVER_PORT:8000}
+spring:
+  application:
+    name: ${APPLICATION_NAME:ecomm-service}
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:ecommerce?createDatabaseIfNotExist=true}
+    username: "${MYSQL_USER:root}"
+    password: "${MYSQL_PASSWORD:Emami@4321}"
+  data:
+    rest:
+      base-path: /api
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
