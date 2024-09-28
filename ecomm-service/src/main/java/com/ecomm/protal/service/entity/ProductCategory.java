@@ -3,6 +3,7 @@ package com.ecomm.protal.service.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
