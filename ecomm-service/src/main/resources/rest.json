@@ -1,0 +1,58 @@
+[
+  {
+    "categoryName": "Shirt",
+    "products": [
+      {
+        "name": "shirt",
+        "description": "Men Solid Henley Neck Cotton Blend Multicolor T-Shirt",
+        "title": "Men Solid Henley Neck Cotton Blend Multicolor T-Shirt",
+        "unitPrice": 350.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/g/y/p/xl-togrblhn-dp3-d145-tripr-original-imah3vgfcymc5zgh.jpeg",
+        "active": true,
+        "units_stock": 12,
+        "date_created": "2024-05-20",
+        "last_updated": "2024-05-20",
+        "categories": {
+          "id": 3,
+          "categoryName": "Shirt"
+        }
+
+      },
+      {
+        "name": "shirt",
+        "description": "Men Colorblock Crew Neck Polyester Dark Blue T-Shirt",
+        "title": "Men Colorblock Crew Neck Polyester Dark Blue T-Shirt",
+        "unitPrice": 400.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/n/n/2/-original-imagy3k84avhhgsy.jpeg",
+        "active": true,
+        "units_stock": 8,
+        "date_created": "2024-05-20",
+        "last_updated": "2024-05-20",
+        "categories": {
+          "id": 3,
+          "categoryName": "Shirt"
+        }
+
+      },
+      {
+        "name": "Shirt",
+        "description": "Men Solid Round Neck Cotton Blend Black T-Shirt",
+        "title": "Men Solid Round Neck Cotton Blend Black T-Shirt",
+        "unitPrice": 700.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/q/6/o/-original-imagydw4vcgzffhw.jpeg",
+        "active": true,
+        "units_stock": 11,
+        "date_created": "2024-05-20",
+        "last_updated": "2024-05-20",
+        "categories": {
+          "id": 3,
+          "categoryName": "Mobile"
+        }
+
+      }
+
+
+    ]
+  }
+]
+
