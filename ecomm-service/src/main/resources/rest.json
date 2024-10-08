@@ -1,47 +1,79 @@
 [
   {
-    "categoryName": "Shirt",
+    "categoryName": "Mobile",
     "products": [
       {
-        "name": "shirt",
-        "description": "Men Solid Henley Neck Cotton Blend Multicolor T-Shirt",
-        "title": "Men Solid Henley Neck Cotton Blend Multicolor T-Shirt",
-        "unitPrice": 350.00,
-        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/g/y/p/xl-togrblhn-dp3-d145-tripr-original-imah3vgfcymc5zgh.jpeg",
+        "name": "Samsung",
+        "description": "SAMSUNG Galaxy S24 Ultra 5G (12GB RAM, 256GB, Titanium Gray)",
+        "title": "SAMSUNG Galaxy S24 Ultra 5g",
+        "unitPrice": 125000.00,
+        "imageUrl": "https://media-ik.croma.com/prod/https://media.croma.com/image/upload/v1705640288/Croma%20Assets/Communication/Mobiles/Images/303838_oqpio4.png",
         "active": true,
         "units_stock": 12,
         "date_created": "2024-05-20",
         "last_updated": "2024-05-20",
         "categories": {
           "id": 3,
-          "categoryName": "Shirt"
+          "categoryName": "Mobile"
         }
 
       },
       {
-        "name": "shirt",
-        "description": "Men Colorblock Crew Neck Polyester Dark Blue T-Shirt",
-        "title": "Men Colorblock Crew Neck Polyester Dark Blue T-Shirt",
-        "unitPrice": 400.00,
-        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/n/n/2/-original-imagy3k84avhhgsy.jpeg",
+        "name": "Motorola",
+        "description": "Motorola G85 5G (Viva Magenta, 128 GB)  (8 GB RAM)",
+        "title": "Motorola G85 5g",
+        "unitPrice": 16999.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/b/y/g/-original-imah4qtgjtzprg3g.jpeg",
         "active": true,
-        "units_stock": 8,
+        "units_stock": 12,
         "date_created": "2024-05-20",
         "last_updated": "2024-05-20",
         "categories": {
           "id": 3,
-          "categoryName": "Shirt"
+          "categoryName": "Mobile"
         }
 
       },
       {
-        "name": "Shirt",
-        "description": "Men Solid Round Neck Cotton Blend Black T-Shirt",
-        "title": "Men Solid Round Neck Cotton Blend Black T-Shirt",
-        "unitPrice": 700.00,
-        "imageUrl": "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/q/6/o/-original-imagydw4vcgzffhw.jpeg",
+        "name": "Realme",
+        "description": "realme P1 5G (Phoenix Red, 128 GB)  (8 GB RAM)",
+        "title": "realme P1 5G ",
+        "unitPrice": 16000.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/y/9/0/-original-imahyuhfg2z4fvyh.jpeg",
         "active": true,
-        "units_stock": 11,
+        "units_stock": 19,
+        "date_created": "2024-05-20",
+        "last_updated": "2024-05-20",
+        "categories": {
+          "id": 3,
+          "categoryName": "Mobile"
+        }
+
+      },
+      {
+        "name": "Apple",
+        "description": "Apple iPhone 16 (Ultramarine, 128 GB)",
+        "title": "Apple iPhone 16 ",
+        "unitPrice": 79999.00,
+        "imageUrl": "https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/q/n/s/-original-imah4jyfrgsbebg9.jpeg",
+        "active": true,
+        "units_stock": 19,
+        "date_created": "2024-05-20",
+        "last_updated": "2024-05-20",
+        "categories": {
+          "id": 3,
+          "categoryName": "Mobile"
+        }
+
+      },
+      {
+        "name": "Samsung",
+        "description": "SAMSUNG Galaxy S24 Ultra 5G (12GB RAM, 256GB, Titanium Gray)",
+        "title": "SAMSUNG Galaxy S24 Ultra 5g",
+        "unitPrice": 125000.00,
+        "imageUrl": "D:/asset/image/product/mobile/samsung.webp",
+        "active": true,
+        "units_stock": 12,
         "date_created": "2024-05-20",
         "last_updated": "2024-05-20",
         "categories": {
@@ -50,6 +82,7 @@
         }
 
       }
+
 
 
     ]

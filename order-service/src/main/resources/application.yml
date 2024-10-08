@@ -1,0 +1,20 @@
+server:
+  port: ${SERVER_PORT:8001}
+spring:
+  application:
+    name: ${APPLICATION_NAME:ecomm-service}
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:ecommerce-customer?createDatabaseIfNotExist=true}
+    username: "${MYSQL_USER:root}"
+    password: "${MYSQL_PASSWORD:Emami@4321}"
+  data:
+    rest:
+      base-path: /api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+razorpay:
+  key: rzp_test_zgaIofTU4GMTe9
+  secret: vbw1MhtLq6HRhaIlOfDia3O3
