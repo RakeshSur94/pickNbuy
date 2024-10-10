@@ -20,8 +20,9 @@ public class CustomerEntity {
     private String email;
     private String password;
     private String phoneNumber;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<OrdersEntity> orders;
+  /*  @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private List<OrdersEntity> orders;*/
 
 
 

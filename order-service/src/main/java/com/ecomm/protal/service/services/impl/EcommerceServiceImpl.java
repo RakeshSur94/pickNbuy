@@ -1,5 +1,6 @@
 package com.ecomm.protal.service.services.impl;
 import com.ecomm.protal.service.entity.OrdersEntity;
+import com.ecomm.protal.service.utils.EcommerceServiceMapping;
 import com.razorpay.Order;
 import com.ecomm.protal.service.dto.*;
 import com.ecomm.protal.service.entity.CustomerEntity;
@@ -11,159 +12,143 @@ import com.ecomm.protal.service.repo.ShippingAddressRepository;
 import com.ecomm.protal.service.services.EcommerceService;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
-import com.razorpay.Utils;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class EcommerceServiceImpl implements EcommerceService {
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private ShippingAddressRepository addressRepository;
+
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+    private final ShippingAddressRepository addressRepository;
     @Value("${razorpay.key}")
     private String razorPayKeyId;
     @Value("${razorpay.secret}")
     private String razorPaySecretKey;
     private RazorpayClient razorpayClient;
+
     @PostConstruct
     public void init() throws RazorpayException {
-        this.razorpayClient= new RazorpayClient(razorPayKeyId,razorPaySecretKey);
+        this.razorpayClient = new RazorpayClient(razorPayKeyId, razorPaySecretKey);
     }
 
 
     @Override
     public PurchaseRequest saveCustomerDetails(PurchaseDto purchaseDto) {
-        ShippingAddress shippingAddress = convertToShippingAddress(purchaseDto.getAddressDto());
-        // Create the Customer entity from CustomerDto
-        CustomerEntity customer = convertToCustomerEntity(purchaseDto.getCustomerDto());
-        ShippingAddress address = convertToShippingAddress(purchaseDto.getAddressDto());
-        // Create the Order entity from OrderDto
-        OrdersEntity orders = convertToOrderEntity(purchaseDto.getOrderDto());
-        List<OrderItems> orderItems = purchaseDto.getOrderDto().getOrdersItems().stream()
-                .map(this::convertToOrderItem).collect(Collectors.toList());
-        orders.setOrdersItems(orderItems);
-        address.setOrders(orderItems);
-        this.customerRepository.save(customer);
-        // Trigger Razorpay payment
+        log.info("Enter into Purchase Request Method {} with details {}", this.getClass(), purchaseDto.toString());
+        CustomerEntity customer = EcommerceServiceMapping.convertToCustomerEntity(purchaseDto.getCustomerDto());
+        ShippingAddress address = EcommerceServiceMapping.convertToShippingAddressEntity(purchaseDto.getAddressDto());
 
-        String orderId = makePayment(convertToOrderDto(orders));
+        log.debug("Creating order entity from orderDto");
+        OrdersEntity orders = EcommerceServiceMapping.convertToOrderEntity(purchaseDto.getOrderDto());
+        log.debug("converting orderItems from orderDto to orderItem");
+        List<OrderItems> orderItems = purchaseDto.getOrdersItemsDto().stream()
+                .map(EcommerceServiceMapping::convertToOrderItem).collect(Collectors.toList());
+        log.info(orderItems.toString());
+        orders.setOrdersItems(orderItems);
+
+        orders.setOrderStatus("ORDER_PENDING");
+        address.setOrders(orderItems);
+        address.setCustomer(customer);
+        this.customerRepository.save(customer);
+        log.warn("orders saved with ORDER_PENDING");
+
+        String orderId = makePayment(EcommerceServiceMapping.convertToOrderDto(orders));
+        log.info("Getting the RazorPay OrderId from makePayment Method and save it to ordersEntity {}", orderId);
         orders.setRazorPayPaymentId(orderId);
         this.orderRepository.save(orders);
-
+        log.info("Saving the address entity");
         this.addressRepository.save(address);
+        log.info("Saving the address entity");
         return PurchaseRequest.builder()
+                .orderId(orderId)
                 .customerDetails(customer.getCustomerName())
-                .orderStatus(orders.getOrderStatus())
+                .orderTrackingNumber(orders.getOrderTrackingNum())
                 .build();
 
 
     }
+
     public String makePayment(OrderDto orderDto) {
+        log.info("Enter into makePayment method {} with orderDto details {}", this.getClass(), orderDto.toString());
         try {
             JSONObject invoiceRequest = new JSONObject();
-            invoiceRequest.put("amount", orderDto.getTotalPrice() * 100); // Amount in paise
+            invoiceRequest.put("amount", orderDto.getTotalPrice() * 100);
             invoiceRequest.put("currency", "INR");
-            invoiceRequest.put("receipt", orderDto.getRazorPayPaymentId());
+            invoiceRequest.put("receipt", "Rakesh");
 
             // Create order with Razorpay
             Order razorpayOrder = razorpayClient.orders.create(invoiceRequest);
-            return razorpayOrder.get("id"); // Return Razorpay order ID
+            log.warn("razorpay order created {}", razorpayOrder.toString());
+             return razorpayOrder.get("id"); // Returning Razorpay order ID
         } catch (RazorpayException e) {
             throw new RuntimeException("Payment initiation failed: " + e.getMessage());
         }
     }
 
-    public boolean verifyPayment(JSONObject params, String secretKey) throws RazorpayException {
-        // Implement your signature verification logic
-        return Utils.verifyPaymentSignature(params, secretKey);
-    }
 
-    public void handlePaymentVerification(PaymentVerificationRequest request) throws RazorpayException {
+
+    public boolean handlePaymentVerification(PaymentVerificationRequest request) throws Exception {
+
+        log.info("Entering handlePaymentVerification with request: {}", request);
+
+        // Create a JSONObject with the payment details
         JSONObject jsonParams = new JSONObject();
-        jsonParams.put("razorpay_order_id", request.getRazorpayOrderId());
-        jsonParams.put("razorpay_payment_id", request.getRazorpayPaymentId());
-        jsonParams.put("razorpay_signature", request.getRazorpaySignature());
+        jsonParams.put("razorpay_order_id", request.getOrderId());
+        jsonParams.put("razorpay_payment_id", request.getPaymentId());
+        jsonParams.put("razorpay_signature", request.getSignature());
 
-        boolean isSignatureValid = verifyPayment(jsonParams, "YOUR_SECRET_KEY");
+        // Verify the payment signature
+        boolean isSignatureValid = verifyPayment(jsonParams, razorPaySecretKey);
+        log.info("paymentID is {}",request.getPaymentId());
 
         if (isSignatureValid) {
-            // Update order status to PAYMENT_SUCCESS
-            OrdersEntity order = orderRepository.findByRazorPayPaymentId(request.getRazorpayOrderId());
-            order.setRazorPayPaymentId(order.getRazorPayPaymentId());
-            order.setOrderStatus("PAYMENT_SUCCESS");
-            orderRepository.save(order);
-        } else {
-            // Update order status to PAYMENT_FAIL
-            OrdersEntity order = orderRepository.findByRazorPayPaymentId(request.getRazorpayOrderId());
-            order.setRazorPayPaymentId(order.getRazorPayPaymentId());
-            order.setOrderStatus("PAYMENT_FAIL");
-            orderRepository.save(order);
+            OrdersEntity ordersEntity = orderRepository.findByRazorPayPaymentId(request.getOrderId());
+            System.out.println(request.getOrderId());
+
+            if (ordersEntity != null) {
+                ordersEntity.setOrderStatus("PAYMENT_SUCCESS");
+                this.orderRepository.save(ordersEntity);
+                return true;
+            }
+
+
         }
+
+        log.warn("Payment verification failed for Razorpay payment ID: {}", request.getPaymentId());
+        return false;
     }
 
 
+        // Utility method for verifying the Razorpay signature
+        private boolean verifyPayment(JSONObject params, String secretKey) throws Exception {
+            String generatedSignature = HmacSHA256(params.getString("razorpay_order_id") + "|" + params.getString("razorpay_payment_id"), secretKey);
+            return generatedSignature.equals(params.getString("razorpay_signature"));
+        }
+
+        // Utility method to generate HMAC SHA256 signature
+        private String HmacSHA256(String data, String secret) throws Exception {
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+            sha256_HMAC.init(secret_key);
+            return Hex.encodeHexString(sha256_HMAC.doFinal(data.getBytes()));
+        }
 
 
 
 
-    // Method to convert ShippingAddressDto to ShippingAddress entity
-    private ShippingAddress convertToShippingAddress(ShippingAddressDto addressDto) {
-        ShippingAddress address = new ShippingAddress();
-        address.setStreet(addressDto.getStreet());
-        address.setCity(addressDto.getCity());
-        address.setState(addressDto.getState());
-        address.setCountry(addressDto.getCountry());
-        address.setZipcode(addressDto.getZipcode());
-        address.setHouseNumber(addressDto.getHouseNumber());
-        // Set other properties if needed
-        return address;
-    }
-    // Method to convert CustomerDto to CustomerEntity
-    private CustomerEntity convertToCustomerEntity(CustomerDto customerDto) {
-        CustomerEntity customer = new CustomerEntity();
-        customer.setCustomerName(customerDto.getCustomerName());
-        customer.setEmail(customerDto.getEmail());
-        customer.setPhoneNumber(customerDto.getPhoneNumber());
-        customer.setPassword("12345555");
-        return customer;
-    }
-    private OrdersEntity convertToOrderEntity(OrderDto orderDto) {
-        OrdersEntity order = new OrdersEntity();
-        order.setOrderTrackingNum(orderDto.getOrderTrackingNum());
-        order.setTotalQuantity(orderDto.getTotalQuantity());
-        order.setTotalPrice(orderDto.getTotalPrice());
-        order.setOrderStatus(orderDto.getOrderStatus());
-        order.setDateCreated(orderDto.getDateCreated());
-        order.setLastUpdated(orderDto.getLastUpdated());
-        // Set other properties if needed
-        return order;
-    }
-    private OrderDto convertToOrderDto(OrdersEntity order) {
-        OrderDto orderDto = new OrderDto();
-        orderDto.setOrderTrackingNum(order.getOrderTrackingNum());
-        orderDto.setTotalQuantity(order.getTotalQuantity());
-        orderDto.setTotalPrice(order.getTotalPrice());
-        orderDto.setDateCreated(order.getDateCreated());
-        orderDto.setLastUpdated(order.getLastUpdated());
 
-        // Set other properties if needed
-        return orderDto;
-    }
-    private OrderItems convertToOrderItem(OrderItemDto orderItemDto) {
-        return OrderItems.builder()
-                .imageUrl(orderItemDto.getImageUrl())
-                .unitPrice(orderItemDto.getUnitPrice())
-                .quantity(orderItemDto.getQuantity())
-                .productId(orderItemDto.getProductId())
-                .build();
 
-    }
 }

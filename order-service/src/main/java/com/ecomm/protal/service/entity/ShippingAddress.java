@@ -25,5 +25,8 @@ public class ShippingAddress {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private List<OrderItems> orders;
+    @OneToOne
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
 
 }

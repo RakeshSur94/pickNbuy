@@ -1,5 +1,6 @@
 package com.ecomm.protal.service.dto;
 
+import com.ecomm.protal.service.entity.CustomerEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -21,4 +22,5 @@ public class ShippingAddressDto {
     private Long zipcode;
     private String country;
     private List<OrderDto> orders;
+    private CustomerDto customer;
 }

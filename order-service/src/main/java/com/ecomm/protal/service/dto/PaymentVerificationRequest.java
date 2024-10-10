@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentVerificationRequest {
-    private String razorpayOrderId;
-    private String razorpayPaymentId;
-    private String razorpaySignature;
+    private String orderId;
+    private String paymentId;
+    private String signature;
 }

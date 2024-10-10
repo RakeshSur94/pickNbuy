@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class PurchaseRequest {
-    private String orderStatus;
+    private Long orderTrackingNumber;
     private String customerDetails;
+    private String orderId;
 }

@@ -10,6 +10,6 @@ import com.razorpay.RazorpayException;
 
 public interface EcommerceService {
     public PurchaseRequest saveCustomerDetails(PurchaseDto purchaseDto);
-    public void handlePaymentVerification(PaymentVerificationRequest paymentVerificationRequest) throws RazorpayException;
+    public boolean handlePaymentVerification(PaymentVerificationRequest paymentVerificationRequest) throws Exception;
 
 }
