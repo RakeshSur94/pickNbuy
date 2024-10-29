@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class ShippingAddressDto {
     private Long addressId;
-    private Integer houseNumber;
+    private String houseNumber;
     private String street;
     private String city;
     private String state;
